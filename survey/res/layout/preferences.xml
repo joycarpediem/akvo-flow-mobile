@@ -121,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:textSize="20sp"
-                android:text="Device Locale" />
+                android:text="@string/device_locale" />
 
             <TextView
                 android:id="@+id/locale_name"

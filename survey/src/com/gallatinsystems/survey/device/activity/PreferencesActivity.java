@@ -17,6 +17,7 @@
 package com.gallatinsystems.survey.device.activity;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,16 +25,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.gallatinsystems.survey.device.R;
 import com.gallatinsystems.survey.device.dao.SurveyDbAdapter;
@@ -41,10 +43,10 @@ import com.gallatinsystems.survey.device.service.LocationService;
 import com.gallatinsystems.survey.device.util.ArrayPreferenceData;
 import com.gallatinsystems.survey.device.util.ArrayPreferenceUtil;
 import com.gallatinsystems.survey.device.util.ConstantUtil;
-import com.gallatinsystems.survey.device.util.PropertyUtil;
-import com.gallatinsystems.survey.device.util.StringUtil;
 import com.gallatinsystems.survey.device.util.LangsPreferenceData;
 import com.gallatinsystems.survey.device.util.LangsPreferenceUtil;
+import com.gallatinsystems.survey.device.util.PropertyUtil;
+import com.gallatinsystems.survey.device.util.StringUtil;
 import com.gallatinsystems.survey.device.util.ViewUtil;
 
 /**
@@ -70,6 +72,8 @@ public class PreferencesActivity extends Activity implements OnClickListener,
     private TextView serverTextView;
     private TextView identTextView;
     private TextView radiusTextView;
+    private View prefLocaleView;
+    private TextView localeTextView;
     private SurveyDbAdapter database;
 
     private LangsPreferenceData langsPrefData;
@@ -105,6 +109,8 @@ public class PreferencesActivity extends Activity implements OnClickListener,
         serverTextView = (TextView) findViewById(R.id.servervalue);
         identTextView = (TextView) findViewById(R.id.identvalue);
         radiusTextView = (TextView) findViewById(R.id.radiusvalue);
+        prefLocaleView = findViewById(R.id.pref_locale);
+        localeTextView = (TextView) prefLocaleView.findViewById(R.id.locale_name);
 
         Resources res = getResources();
         props = new PropertyUtil(res);
@@ -206,6 +212,8 @@ public class PreferencesActivity extends Activity implements OnClickListener,
             radiusTextView.setText(Double.parseDouble(val) / 1000.0 + " km");
         }
 
+        Locale locale = getResources().getConfiguration().locale;
+        localeTextView.setText(locale.getDisplayLanguage());
     }
 
     /**
@@ -239,6 +247,7 @@ public class PreferencesActivity extends Activity implements OnClickListener,
                 .setOnClickListener(this);
         ((ImageButton) findViewById(R.id.radiusbutton))
                 .setOnClickListener(this);
+        prefLocaleView.setOnClickListener(this);
     }
 
     public void onPause() {
@@ -294,8 +303,9 @@ public class PreferencesActivity extends Activity implements OnClickListener,
                     uploadOptionTextView,
                     uploadArray[ConstantUtil.UPLOAD_DATA_ALLWAYS_IDX],
                     ConstantUtil.DATA_AVAILABLE_INTENT);
+        } else if (R.id.pref_locale == v.getId()) {
+            startActivity(new Intent(Settings.ACTION_LOCALE_SETTINGS));
         } else if (R.id.surveylangbutton == v.getId()) {
-
             langsSelectedNameArray = langsPrefData.getLangsSelectedNameArray();
             langsSelectedBooleanArray = langsPrefData.getLangsSelectedBooleanArray();
             langsSelectedMasterIndexArray = langsPrefData.getLangsSelectedMasterIndexArray();

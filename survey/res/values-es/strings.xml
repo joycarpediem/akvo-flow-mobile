@@ -61,7 +61,7 @@
     <string name="poweroptlabel">Controlar batería</string>
     <string name="poweroptdesc">Activar/Desactivar la señal Wi-Fi para una batería más duradera.</string>
     <string name="screenoptlabel">Mantener la pantalla activa durante la recopilación de datos</string>
-    <string name="screenoptdesc">Evitar que la pantalla se apague durante la introducción de datos. Asegúrese de apagar la pantalla (o cerrar la aplicación) cuando no esté en usi, para reducir el consumo de batería.</string>
+    <string name="screenoptdesc">Evitar que la pantalla se apague durante la introducción de datos. Asegúrese de apagar la pantalla (o cerrar la aplicación) cuando no esté en uso, para reducir el consumo de batería.</string>
     <string name="aboutlabel">Acerca de</string>
     <string name="aboutdesc">Muestra información sobre la versión actual</string>
     <string name="abouttitle">Acerca de - FieldSurvey</string>

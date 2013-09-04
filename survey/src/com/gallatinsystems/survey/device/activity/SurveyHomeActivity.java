@@ -367,7 +367,6 @@ public class SurveyHomeActivity extends Activity implements OnItemClickListener 
     protected void onPause() {
         super.onPause();
         unregisterReceiver(surveysSyncReceiver);
-        saveState();
     }
 
     @Override
@@ -381,9 +380,6 @@ public class SurveyHomeActivity extends Activity implements OnItemClickListener 
     private void populateFields() {
         userField.setText(currentName);
         menuViewAdapter.loadData(this);
-    }
-
-    private void saveState() {
     }
 
     /**

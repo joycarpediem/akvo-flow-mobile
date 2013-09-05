@@ -28,7 +28,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Html;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -336,42 +335,11 @@ public class OptionQuestionView extends QuestionView {
      * @return
      */
     private Spanned formOptionText(Option opt) {
-        boolean isFirst = true;
-        StringBuilder text = new StringBuilder();
-        for (int i = 0; i < langs.length; i++) {
-            if (getDefaultLang().equalsIgnoreCase(langs[i])) {
-                if (!isFirst) {
-                    text.append(" / ");
-                } else {
-                    isFirst = false;
-                }
-                text.append(TextUtils.htmlEncode(opt.getText()));
-
-            } else {
-                AltText txt = opt.getAltText(langs[i]);
-                if (txt != null) {
-                    if (!isFirst) {
-                        text.append(" / ");
-                    } else {
-                        isFirst = false;
-                    }
-                    text.append("<font color='");
-                    // spinners have black backgrounds so if the text color is
-                    // white, make it black so it shows up
-                    if (ConstantUtil.WHITE_COLOR.equalsIgnoreCase(colors[i])
-                            && ConstantUtil.SPINNER_RENDER_MODE
-                                    .equalsIgnoreCase(question.getRenderType())) {
-                        text.append(ConstantUtil.BLACK_COLOR);
-                    } else {
-                        text.append(colors[i]);
-                    }
-                    text.append("'>")
-                            .append(TextUtils.htmlEncode(txt.getText()))
-                            .append("</font>");
-                }
-            }
+        AltText altText = opt.getAltText(mLanguage);
+        if (altText != null) {
+            return Html.fromHtml(altText.getText());
         }
-        return Html.fromHtml(text.toString());
+        return Html.fromHtml(opt.getText());
     }
 
     /**

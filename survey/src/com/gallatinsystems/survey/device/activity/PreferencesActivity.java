@@ -25,7 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,13 +37,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.gallatinsystems.survey.device.R;
+import com.gallatinsystems.survey.device.app.FlowApp;
 import com.gallatinsystems.survey.device.dao.SurveyDbAdapter;
 import com.gallatinsystems.survey.device.service.LocationService;
 import com.gallatinsystems.survey.device.util.ArrayPreferenceData;
 import com.gallatinsystems.survey.device.util.ArrayPreferenceUtil;
 import com.gallatinsystems.survey.device.util.ConstantUtil;
-import com.gallatinsystems.survey.device.util.LangsPreferenceData;
-import com.gallatinsystems.survey.device.util.LangsPreferenceUtil;
 import com.gallatinsystems.survey.device.util.PropertyUtil;
 import com.gallatinsystems.survey.device.util.StringUtil;
 import com.gallatinsystems.survey.device.util.ViewUtil;
@@ -64,7 +62,6 @@ public class PreferencesActivity extends Activity implements OnClickListener,
     private CheckBox photoSizeReminderCheckbox;
     private CheckBox shrinkPhotosCheckbox;
     private TextView uploadOptionTextView;
-    private TextView languageTextView;
     private TextView precacheHelpTextView;
     private TextView precachePointsTextView;
     private TextView surveyUpdateTextView;
@@ -72,14 +69,8 @@ public class PreferencesActivity extends Activity implements OnClickListener,
     private TextView serverTextView;
     private TextView identTextView;
     private TextView radiusTextView;
-    private View prefLocaleView;
     private TextView localeTextView;
     private SurveyDbAdapter database;
-
-    private LangsPreferenceData langsPrefData;
-    private String[] langsSelectedNameArray;
-    private boolean[] langsSelectedBooleanArray;
-    private int[] langsSelectedMasterIndexArray;
 
     private String[] precacheCountryArray;
     private boolean[] selectedPrecacheCountries;
@@ -100,7 +91,6 @@ public class PreferencesActivity extends Activity implements OnClickListener,
         shrinkPhotosCheckbox = (CheckBox) findViewById(R.id.shrinkphotoscheckbox);
 
         uploadOptionTextView = (TextView) findViewById(R.id.uploadoptionvalue);
-        languageTextView = (TextView) findViewById(R.id.surveylangvalue);
         precachePointsTextView = (TextView) findViewById(R.id.cacheptcountryvalue);
         precacheHelpTextView = (TextView) findViewById(R.id.precachehelpvalue);
 
@@ -109,8 +99,7 @@ public class PreferencesActivity extends Activity implements OnClickListener,
         serverTextView = (TextView) findViewById(R.id.servervalue);
         identTextView = (TextView) findViewById(R.id.identvalue);
         radiusTextView = (TextView) findViewById(R.id.radiusvalue);
-        prefLocaleView = findViewById(R.id.pref_locale);
-        localeTextView = (TextView) prefLocaleView.findViewById(R.id.locale_name);
+        localeTextView = (TextView) findViewById(R.id.locale_name);
 
         Resources res = getResources();
         props = new PropertyUtil(res);
@@ -159,14 +148,6 @@ public class PreferencesActivity extends Activity implements OnClickListener,
                 uploadOptionTextView.setText(uploadArray[intVal]);
             }
         }
-
-        val = settings.get(ConstantUtil.SURVEY_LANG_SETTING_KEY);
-        String langsPresentIndexes = settings.get(ConstantUtil.SURVEY_LANG_PRESENT_KEY);
-        langsPrefData = LangsPreferenceUtil.createLangPrefData(this, val, langsPresentIndexes);
-
-        languageTextView.setText(ArrayPreferenceUtil.formSelectedItemString(
-                langsPrefData.getLangsSelectedNameArray(),
-                langsPrefData.getLangsSelectedBooleanArray()));
 
         val = settings.get(ConstantUtil.PRECACHE_POINT_COUNTRY_KEY);
         ArrayPreferenceData precacheCountries = ArrayPreferenceUtil.loadArray(
@@ -232,7 +213,7 @@ public class PreferencesActivity extends Activity implements OnClickListener,
         shrinkPhotosCheckbox.setOnCheckedChangeListener(this);
         ((ImageButton) findViewById(R.id.uploadoptionbutton))
                 .setOnClickListener(this);
-        ((ImageButton) findViewById(R.id.surveylangbutton))
+        ((ImageButton) findViewById(R.id.pref_locale_button))
                 .setOnClickListener(this);
         ((ImageButton) findViewById(R.id.precachepointbutton))
                 .setOnClickListener(this);
@@ -247,7 +228,6 @@ public class PreferencesActivity extends Activity implements OnClickListener,
                 .setOnClickListener(this);
         ((ImageButton) findViewById(R.id.radiusbutton))
                 .setOnClickListener(this);
-        prefLocaleView.setOnClickListener(this);
     }
 
     public void onPause() {
@@ -303,31 +283,8 @@ public class PreferencesActivity extends Activity implements OnClickListener,
                     uploadOptionTextView,
                     uploadArray[ConstantUtil.UPLOAD_DATA_ALLWAYS_IDX],
                     ConstantUtil.DATA_AVAILABLE_INTENT);
-        } else if (R.id.pref_locale == v.getId()) {
-            startActivity(new Intent(Settings.ACTION_LOCALE_SETTINGS));
-        } else if (R.id.surveylangbutton == v.getId()) {
-            langsSelectedNameArray = langsPrefData.getLangsSelectedNameArray();
-            langsSelectedBooleanArray = langsPrefData.getLangsSelectedBooleanArray();
-            langsSelectedMasterIndexArray = langsPrefData.getLangsSelectedMasterIndexArray();
-
-            ViewUtil.displayLanguageSelector(this, langsSelectedNameArray,
-                    langsSelectedBooleanArray,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int clicked) {
-                            database.savePreference(
-                                    ConstantUtil.SURVEY_LANG_SETTING_KEY,
-                                    LangsPreferenceUtil
-                                            .formLangPreferenceString(langsSelectedBooleanArray,
-                                                    langsSelectedMasterIndexArray));
-
-                            languageTextView.setText(ArrayPreferenceUtil
-                                    .formSelectedItemString(langsSelectedNameArray,
-                                            langsSelectedBooleanArray));
-                            if (dialog != null) {
-                                dialog.dismiss();
-                            }
-                        }
-                    });
+        } else if (R.id.pref_locale_button == v.getId()) {
+            showLocaleDialog();
         } else if (R.id.precachehelpbutton == v.getId()) {
             showPreferenceDialog(R.string.precachehelpdialogtitle,
                     R.array.precachehelpoptions,
@@ -368,7 +325,6 @@ public class PreferencesActivity extends Activity implements OnClickListener,
                                     props.getProperty(ConstantUtil.SERVER_BASE),
                                     ConstantUtil.SERVER_SETTING_KEY,
                                     serverArray, serverTextView);
-
                         }
                     });
 
@@ -490,6 +446,20 @@ public class PreferencesActivity extends Activity implements OnClickListener,
                         if (dialog != null) {
                             dialog.dismiss();
                         }
+                    }
+                });
+        builder.show();
+    }
+    
+    private void showLocaleDialog() {
+        final String[] localeCodes = getResources().getStringArray(
+                R.array.alllanguagecodes);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.app_language).setItems(R.array.alllanguages,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FlowApp.getApp().setLocale(localeCodes[which], true);
                     }
                 });
         builder.show();

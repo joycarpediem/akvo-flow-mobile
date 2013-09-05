@@ -110,51 +110,33 @@
                 android:textSize="14sp" />
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/pref_locale"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" 
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:textSize="20sp"
-                android:text="@string/device_locale" />
-
-            <TextView
-                android:id="@+id/locale_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:textSize="14sp" />
-        </LinearLayout>
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
             <ImageButton
-                android:id="@+id/surveylangbutton"
+                android:id="@+id/pref_locale_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:src="@android:drawable/arrow_down_float" />
 
             <TextView
-                android:id="@+id/surveylanglabel"
-                android:layout_width="match_parent"
+                android:id="@+id/locale_label"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/surveylangbutton"
-                android:text="@string/surveylanglabel"
-                android:textSize="20sp" />
+                android:gravity="center_vertical"
+                android:layout_alignParentLeft="true"
+                android:textSize="20sp"
+                android:text="@string/app_language" />
 
             <TextView
-                android:id="@+id/surveylangvalue"
-                android:layout_width="match_parent"
+                android:id="@+id/locale_name"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/surveylanglabel"
+                android:gravity="center_vertical"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/locale_label"
                 android:textSize="14sp" />
         </RelativeLayout>
 

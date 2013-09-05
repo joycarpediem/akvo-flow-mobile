@@ -214,6 +214,8 @@ public class ConstantUtil {
     public static final String NEARBY_RADIUS = "nearby.points.radius";
     public static final String PHOTO_SIZE_REMINDER_KEY = "survey.media.photo.sizereminder";
     public static final String SHRINK_PHOTOS_KEY = "survey.media.photo.shrink";
+    
+    public static final String PREF_LOCALE = "pref.locale";
 
     /**
      * settings values

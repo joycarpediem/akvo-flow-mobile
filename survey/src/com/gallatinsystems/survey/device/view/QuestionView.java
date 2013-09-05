@@ -26,7 +26,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Spanned;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
@@ -35,6 +34,7 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
 import com.gallatinsystems.survey.device.R;
+import com.gallatinsystems.survey.device.app.FlowApp;
 import com.gallatinsystems.survey.device.domain.AltText;
 import com.gallatinsystems.survey.device.domain.Dependency;
 import com.gallatinsystems.survey.device.domain.Question;
@@ -63,10 +63,11 @@ public class QuestionView extends TableLayout implements
     private ArrayList<QuestionInteractionListener> listeners;
     private ImageButton tipImage;
     protected String[] langs = null;
-    protected static String[] colors = null;
     protected boolean readOnly;
     public static int screenWidth;
     protected String defaultLang;
+    
+    protected String mLanguage;
 
     /**
      * install a single tableRow containing a textView with the question text
@@ -80,14 +81,12 @@ public class QuestionView extends TableLayout implements
         question = q;
         this.defaultLang = defaultLangauge;
         this.langs = langs;
-        if (colors == null) {
-            // must have enough colors for all enabled languages
-            colors = context.getResources().getStringArray(R.array.colors);
-        }
         TableRow tr = new TableRow(context);
         questionText = new TextView(context);
-
         questionText.setWidth(getMaxTextWidth());
+        
+        // Get custom language
+        mLanguage = FlowApp.getApp().getLanguage();
 
         this.readOnly = readOnly;
         if (!readOnly) {
@@ -110,7 +109,8 @@ public class QuestionView extends TableLayout implements
                 }
             });
         }
-        questionText.setText(formText(), BufferType.SPANNABLE);
+        //questionText.setText(formText(), BufferType.SPANNABLE);
+        questionText.setText(getDisplayText(), BufferType.SPANNABLE);
         tr.addView(questionText);
 
         // if there is a tip for this question, construct an alert dialog box
@@ -150,12 +150,29 @@ public class QuestionView extends TableLayout implements
             setVisibility(View.GONE);
         }
     }
+    
+    /**
+     * Get the (localized) text to display, based on the 
+     * user's custom language.
+     * If the custom language is not in the AltText map,
+     * we will return the default text, either because that's
+     * also the custom language, or because we have to use the 
+     * default one as a fall-back
+     * 
+     * @return localized text to be displayed
+     */
+    private String getDisplayText() {
+        AltText altText = question.getAltText(mLanguage);
+        if (altText != null) {
+            return altText.getText();
+        }
+        return question.getText();
+    }
 
     /**
      * forms the question text based on the selected languages
      * 
      * @return
-     */
     private Spanned formText() {
         boolean isFirst = true;
         StringBuilder text = new StringBuilder();
@@ -188,6 +205,7 @@ public class QuestionView extends TableLayout implements
         }
         return Html.fromHtml(text.toString());
     }
+     */
 
     /**
      * updates the question's visible languages
@@ -196,7 +214,7 @@ public class QuestionView extends TableLayout implements
      */
     public void updateSelectedLanguages(String[] languageCodes) {
         langs = languageCodes;
-        questionText.setText(formText());
+        //questionText.setText(formText());
     }
 
     /**
@@ -266,31 +284,16 @@ public class QuestionView extends TableLayout implements
             TextView tipText = new TextView(getContext());
             StringBuilder textBuilder = new StringBuilder();
             ArrayList<QuestionHelp> helpItems = question.getHelpByType(type);
-            boolean isFirst = true;
             if (helpItems != null) {
                 for (int i = 0; i < helpItems.size(); i++) {
                     if (i > 0) {
                         textBuilder.append("<br>");
                     }
-
-                    for (int j = 0; j < langs.length; j++) {
-                        if (defaultLang.equalsIgnoreCase(langs[j])) {
-                            textBuilder.append(helpItems.get(i).getText());
-                            isFirst = false;
-                        }
-
-                        AltText aText = helpItems.get(i).getAltText(langs[j]);
-                        if (aText != null) {
-                            if (!isFirst) {
-                                textBuilder.append(" / ");
-                            } else {
-                                isFirst = false;
-                            }
-
-                            textBuilder.append("<font color='").append(colors[j]).append("'>")
-                                    .append(aText.getText()).append("</font>");
-                        }
-                    }
+                    
+                    QuestionHelp helpItem = helpItems.get(i);
+                    AltText altText = helpItem.getAltText(mLanguage);
+                    String text = altText != null ? altText.getText() : helpItem.getText();
+                    textBuilder.append(text);
                 }
             }
             tipText.setText(Html.fromHtml(textBuilder.toString()));

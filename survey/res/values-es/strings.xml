@@ -225,7 +225,8 @@
     <string name="clicktoinstall">Pulse para instalar</string>
     <string name="clear_data_success">Los datos han sido correctamente eliminados del dispositivo</string>
     <string name="clear_data_error">Ha ocurrido un error borrando los datos</string>
-    <string name="device_locale">Idioma del dispositivo</string>
+    <string name="app_language">Idioma</string>
+    <string name="please_restart">Por favor, reinicie la aplicación</string>
 
     <!-- Action to identify the BroadcastReceiver, notifying new surveys have been downloaded -->
     <string name="action_surveys_sync">fieldsurvey.ACTION_SURVEYS_SYNC</string>

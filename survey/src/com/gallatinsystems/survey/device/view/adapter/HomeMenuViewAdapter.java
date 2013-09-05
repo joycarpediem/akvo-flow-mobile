@@ -173,12 +173,11 @@ public class HomeMenuViewAdapter extends BaseAdapter {
      * @param c
      * @return
      */
-    private ArrayList<Survey> fetchSurveys(Context c) {
+    private void fetchSurveys(Context c) {
         SurveyDbAdapter database = new SurveyDbAdapter(c);
         database.open();
         surveys = database.listSurveys(null);
         database.close();
-        return surveys;
     }
 
     public int getCount() {

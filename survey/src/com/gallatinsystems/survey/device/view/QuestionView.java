@@ -55,13 +55,16 @@ import com.gallatinsystems.survey.device.util.ViewUtil;
  */
 public class QuestionView extends TableLayout implements
         QuestionInteractionListener {
+    private final int DEFAULT_COLOR;
+    private final int HIGHLIGHT_COLOR = Color.RED;
+    
     protected static final int DEFAULT_WIDTH = 290;
+    
     private TextView questionText;
-
-    protected Question question;
     private QuestionResponse response;
     private ArrayList<QuestionInteractionListener> listeners;
     private ImageButton tipImage;
+    protected Question question;
     protected String[] langs = null;
     protected boolean readOnly;
     public static int screenWidth;
@@ -84,6 +87,9 @@ public class QuestionView extends TableLayout implements
         TableRow tr = new TableRow(context);
         questionText = new TextView(context);
         questionText.setWidth(getMaxTextWidth());
+        
+        // Retrieve the default color
+        DEFAULT_COLOR = questionText.getTextColors().getDefaultColor();
         
         // Get custom language
         mLanguage = FlowApp.getApp().getLanguage();
@@ -581,9 +587,9 @@ public class QuestionView extends TableLayout implements
      */
     public void highlight(boolean useHighlight) {
         if (useHighlight) {
-            questionText.setBackgroundColor(0x55CC99CC);
+            questionText.setBackgroundColor(HIGHLIGHT_COLOR);
         } else {
-            questionText.setBackgroundColor(Color.TRANSPARENT);
+            questionText.setBackgroundColor(DEFAULT_COLOR);
         }
     }
     

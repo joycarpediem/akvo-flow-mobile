@@ -587,9 +587,9 @@ public class QuestionView extends TableLayout implements
      */
     public void highlight(boolean useHighlight) {
         if (useHighlight) {
-            questionText.setBackgroundColor(HIGHLIGHT_COLOR);
+            questionText.setTextColor(HIGHLIGHT_COLOR);
         } else {
-            questionText.setBackgroundColor(DEFAULT_COLOR);
+            questionText.setTextColor(DEFAULT_COLOR);
         }
     }
     

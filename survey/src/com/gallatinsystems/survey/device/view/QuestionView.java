@@ -162,11 +162,19 @@ public class QuestionView extends TableLayout implements
      * @return localized text to be displayed
      */
     private String getDisplayText() {
+        StringBuilder builder = new StringBuilder();
         AltText altText = question.getAltText(mLanguage);
         if (altText != null) {
-            return altText.getText();
+            builder.append(altText.getText());
+        } else {
+            builder.append(question.getText());
         }
-        return question.getText();
+        
+        if (question.isMandatory()) {
+            builder.append("*");
+        }
+        
+        return builder.toString();
     }
 
     /**

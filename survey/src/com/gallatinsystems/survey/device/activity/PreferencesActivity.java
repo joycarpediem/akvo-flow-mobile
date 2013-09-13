@@ -25,7 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,6 +37,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.gallatinsystems.survey.device.R;
+import com.gallatinsystems.survey.device.app.FlowApp;
 import com.gallatinsystems.survey.device.dao.SurveyDbAdapter;
 import com.gallatinsystems.survey.device.service.LocationService;
 import com.gallatinsystems.survey.device.util.ArrayPreferenceData;
@@ -304,7 +304,7 @@ public class PreferencesActivity extends Activity implements OnClickListener,
                     uploadArray[ConstantUtil.UPLOAD_DATA_ALLWAYS_IDX],
                     ConstantUtil.DATA_AVAILABLE_INTENT);
         } else if (R.id.pref_locale == v.getId()) {
-            startActivity(new Intent(Settings.ACTION_LOCALE_SETTINGS));
+            showLanguageDialog();
         } else if (R.id.surveylangbutton == v.getId()) {
             langsSelectedNameArray = langsPrefData.getLangsSelectedNameArray();
             langsSelectedBooleanArray = langsPrefData.getLangsSelectedBooleanArray();
@@ -420,6 +420,20 @@ public class PreferencesActivity extends Activity implements OnClickListener,
                         }
                     });
         }
+    }
+    
+    private void showLanguageDialog() {
+        final String[] localeCodes = getResources().getStringArray(
+                R.array.app_language_codes);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.app_language).setItems(R.array.app_languages,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FlowApp.getApp().setLocale(localeCodes[which], true);
+                    }
+                });
+        builder.show(); 
     }
 
     /**

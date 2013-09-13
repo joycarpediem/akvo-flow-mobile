@@ -55,6 +55,9 @@ import com.gallatinsystems.survey.device.util.ViewUtil;
  */
 public class QuestionView extends TableLayout implements
         QuestionInteractionListener {
+    private final int DEFAULT_COLOR;
+    private static final int HIHGLIGHT_COLOR = Color.RED;
+    
     protected static final int DEFAULT_WIDTH = 290;
     private TextView questionText;
 
@@ -111,6 +114,7 @@ public class QuestionView extends TableLayout implements
             });
         }
         questionText.setText(formText(), BufferType.SPANNABLE);
+        DEFAULT_COLOR = questionText.getCurrentTextColor();
         tr.addView(questionText);
 
         // if there is a tip for this question, construct an alert dialog box
@@ -570,9 +574,9 @@ public class QuestionView extends TableLayout implements
      */
     public void highlight(boolean useHighlight) {
         if (useHighlight) {
-            questionText.setBackgroundColor(0x55CC99CC);
+            questionText.setTextColor(HIHGLIGHT_COLOR);
         } else {
-            questionText.setBackgroundColor(Color.TRANSPARENT);
+            questionText.setTextColor(DEFAULT_COLOR);
         }
     }
     
